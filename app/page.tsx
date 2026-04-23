@@ -1,7 +1,9 @@
+import UrbanCallLanding from "./urbancall/urbancall_landing";
+
 export default function Home() {
   return (
     <main>
-      <div>Hello world!</div>
+      <UrbanCallLanding />
     </main>
   );
 }
