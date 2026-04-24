@@ -298,7 +298,7 @@ export default function UrbanCallLanding() {
       {/* ═══ FOOTER ═══ */}
       <footer style={{ borderTop: `1px solid ${MUTED}15`, padding: "32px 0", textAlign: "center" }}>
         <div style={{ fontFamily: "monospace", fontSize: 12, color: MUTED }}>
-          Built for the Bolna AI Hiring Challenge • Hyderabad, India • {new Date().getFullYear()}
+          Built with ❤️ | Hyderabad, India • {new Date().getFullYear()}
         </div>
       </footer>
     </div>
