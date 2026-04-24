@@ -176,10 +176,13 @@ export default function UrbanCallLanding() {
           <h1 style={{ ...headingStyle, fontSize: 56, letterSpacing: -1 }}>
             <GlowText color={ACCENT}>Urban</GlowText>Call
           </h1>
+          
           <p style={{ fontSize: 20, color: MUTED, marginTop: 12, maxWidth: 600 }}>
             Voice AI marketplace for blue-collar services. Workers register, customers post jobs, AI agents handle everything — through phone calls.
           </p>
-
+          <h2 style={{ ...headingStyle, fontSize: 26, letterSpacing: 1, marginTop: 8, color: MUTED }}>
+            No Web. No App. Just Call, <GlowText color={ACCENT}>Sitback & Relax</GlowText>
+          </h2>
           {/* Phone numbers */}
           <div style={{ display: "flex", gap: 20, marginTop: 40, flexWrap: "wrap" }}>
             <PhoneCard label="Worker Line — Call to Register" phone={WORKER_PHONE} color={ACCENT} side="left" />
