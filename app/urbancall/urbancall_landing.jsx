@@ -1,6 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
+import ContactForm from "@/app/components/ContactForm";
+
+const LOGO = "/assets/web-app-manifest-512x512.png";
 
 const ACCENT = "#00D2D3";
 const PURPLE = "#6C5CE7";
@@ -11,70 +15,21 @@ const CARD = "#0E0E1A";
 const TEXT = "#E8E8F0";
 const MUTED = "#6B6B8D";
 
-const WORKER_PHONE = "+1 (978) 307-8564";
-const CUSTOMER_PHONE = "+1 (229) 629-7740";
-
-const agents = [
-  {
-    id: 1,
-    name: "Arjun",
-    type: "Inbound",
-    line: "Worker",
-    purpose: "Registration + queries + job completion",
-    color: ACCENT,
-    icon: "🎙️",
-  },
-  {
-    id: 2,
-    name: "Arjun — Job Offer",
-    type: "Outbound",
-    line: "Worker",
-    purpose: "Calls worker → presents job → captures accept/decline",
-    color: PURPLE,
-    icon: "⚡",
-  },
-  {
-    id: 3,
-    name: "Priya",
-    type: "Inbound",
-    line: "Customer",
-    purpose: "Job registration + status queries + cancellation",
-    color: CORAL,
-    icon: "👤",
-  },
-  {
-    id: 4,
-    name: "Priya — Pairing",
-    type: "Outbound",
-    line: "Customer",
-    purpose: "Shares worker's phone number after acceptance",
-    color: GREEN,
-    icon: "📞",
-  },
-  {
-    id: 5,
-    name: "Priya — Feedback",
-    type: "Outbound",
-    line: "Customer",
-    purpose: "NPS rating + punctuality, behavior, quality",
-    color: "#FFD93D",
-    icon: "⭐",
-  },
-];
+const PHONE = "+91 79714 42643";
 
 const timeline = [
   {
     step: 1,
     label: "Worker Registration",
     time: "~90s",
-    agent: "Agent 1",
+    agent: "Phone Line",
     desc: "Worker calls → name, trade, locality, experience → registered",
   },
   {
     step: 2,
     label: "Customer Job Post",
     time: "~90s",
-    agent: "Agent 3",
+    agent: "Phone Line",
     desc: "Customer calls → service type, description, locality → job created",
   },
   {
@@ -88,14 +43,14 @@ const timeline = [
     step: 4,
     label: "Worker Job Offer",
     time: "~60s",
-    agent: "Agent 2",
+    agent: "Phone Line",
     desc: "Calls worker → presents job details → captures accept/decline",
   },
   {
     step: 5,
     label: "Customer Pairing",
     time: "~45s",
-    agent: "Agent 4",
+    agent: "Phone Line",
     desc: "Calls customer → shares worker's number → confirms noted",
   },
   {
@@ -109,7 +64,7 @@ const timeline = [
     step: 7,
     label: "Feedback Collection",
     time: "~120s",
-    agent: "Agent 1 → 5",
+    agent: "Phone Line",
     desc: "Worker marks complete → system calls customer for structured feedback",
   },
 ];
@@ -137,39 +92,6 @@ const trades = [
   "Interior Texture",
 ];
 
-const bolnaFeatures = [
-  {
-    title: "Caller-Context API",
-    desc: "GET /caller-context injects DB state as prompt variables before each call — the agent knows who's calling before speaking.",
-    icon: "🔌",
-  },
-  {
-    title: "LLM Extraction",
-    desc: "Post-call structured data extraction with typed enums, confidence scores, and reasoning — powers all DB mutations.",
-    icon: "🧠",
-  },
-  {
-    title: "Outbound POST /call",
-    desc: "Programmatic outbound calls with user_data injection for personalized welcome messages and context.",
-    icon: "📡",
-  },
-  {
-    title: "Webhook Pipeline",
-    desc: "Incremental event merging — every event upserts into a single call_logs row. Idempotent processing via processed flag.",
-    icon: "🔄",
-  },
-  {
-    title: "Multi-Agent Architecture",
-    desc: "5 agents across 2 accounts — each with specialized prompts, extractions, and a single clear responsibility.",
-    icon: "🤖",
-  },
-  {
-    title: "Voice Personalization",
-    desc: "ElevenLabs TTS with Hinglish prompts, feminine verb enforcement for Priya, paired-digit phone delivery.",
-    icon: "🗣️",
-  },
-];
-
 function GlowText({ children, color = ACCENT, as: Tag = "span" }) {
   return (
     <Tag
@@ -180,7 +102,7 @@ function GlowText({ children, color = ACCENT, as: Tag = "span" }) {
   );
 }
 
-function PhoneCard({ label, phone, color, side }) {
+function PhoneCard({ label, phone, color }) {
   const [copied, setCopied] = useState(false);
   return (
     <div
@@ -189,8 +111,9 @@ function PhoneCard({ label, phone, color, side }) {
         border: `1px solid ${color}30`,
         borderRadius: 16,
         padding: "28px 32px",
-        textAlign: side === "left" ? "left" : "right",
-        flex: 1,
+        textAlign: "center",
+        width: "100%",
+        maxWidth: 420,
         position: "relative",
         overflow: "hidden",
         cursor: "pointer",
@@ -208,7 +131,7 @@ function PhoneCard({ label, phone, color, side }) {
         style={{
           position: "absolute",
           top: -40,
-          [side === "left" ? "right" : "left"]: -40,
+          right: -40,
           width: 120,
           height: 120,
           borderRadius: "50%",
@@ -252,99 +175,20 @@ function PhoneCard({ label, phone, color, side }) {
   );
 }
 
-function AgentCard({ agent }) {
-  return (
-    <div
-      style={{
-        background: CARD,
-        border: `1px solid ${agent.color}20`,
-        borderRadius: 12,
-        padding: "20px 24px",
-        transition: "all 0.3s ease",
-        position: "relative",
-        overflow: "hidden",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = `${agent.color}60`;
-        e.currentTarget.style.transform = "translateY(-2px)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = `${agent.color}20`;
-        e.currentTarget.style.transform = "translateY(0)";
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: 3,
-          height: "100%",
-          background: agent.color,
-        }}
-      />
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 8,
-        }}
-      >
-        <span style={{ fontSize: 20 }}>{agent.icon}</span>
-        <div>
-          <div
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700,
-              color: TEXT,
-              fontSize: 15,
-            }}
-          >
-            Agent {agent.id}: {agent.name}
-          </div>
-          <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-            <span
-              style={{
-                fontFamily: "monospace",
-                fontSize: 10,
-                background: `${agent.color}15`,
-                color: agent.color,
-                padding: "2px 8px",
-                borderRadius: 4,
-              }}
-            >
-              {agent.type}
-            </span>
-            <span
-              style={{
-                fontFamily: "monospace",
-                fontSize: 10,
-                background: `${MUTED}15`,
-                color: MUTED,
-                padding: "2px 8px",
-                borderRadius: 4,
-              }}
-            >
-              {agent.line} Line
-            </span>
-          </div>
-        </div>
-      </div>
-      <div
-        style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, paddingLeft: 30 }}
-      >
-        {agent.purpose}
-      </div>
-    </div>
-  );
-}
-
 function TimelineStep({ item, isLast }) {
   const colors = [ACCENT, CORAL, MUTED, PURPLE, GREEN, "#FFD93D", ACCENT];
   const c = colors[(item.step - 1) % colors.length];
   return (
-    <div style={{ display: "flex", gap: 20, position: "relative" }}>
+    <div
+      style={{
+        display: "flex",
+        gap: 20,
+        position: "relative",
+        textAlign: "left",
+        maxWidth: 560,
+        margin: "0 auto",
+      }}
+    >
       <div
         style={{
           display: "flex",
@@ -418,7 +262,7 @@ function TimelineStep({ item, isLast }) {
   );
 }
 
-export default function UrbanCallLanding() {
+export default function CallKaarigarLanding() {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -427,7 +271,12 @@ export default function UrbanCallLanding() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const sectionStyle = { maxWidth: 960, margin: "0 auto", padding: "0 24px" };
+  const sectionStyle = {
+    maxWidth: 960,
+    margin: "0 auto",
+    padding: "0 24px",
+    textAlign: "center",
+  };
   const headingStyle = {
     fontFamily: "'Space Grotesk', sans-serif",
     fontWeight: 700,
@@ -461,6 +310,97 @@ export default function UrbanCallLanding() {
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.6s ease forwards; }
+
+        .contact-form { display: grid; gap: 14px; }
+        .contact-form .field { display: grid; gap: 6px; }
+        .contact-form .field span {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 11px;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          color: ${MUTED};
+        }
+        .contact-form .field input,
+        .contact-form .field textarea {
+          width: 100%;
+          background: ${CARD};
+          border: 1px solid ${MUTED}30;
+          border-radius: 10px;
+          padding: 12px 14px;
+          color: ${TEXT};
+          font: inherit;
+        }
+        .contact-form .field input:focus,
+        .contact-form .field textarea:focus {
+          outline: none;
+          border-color: ${ACCENT}80;
+        }
+        .contact-form .btn-primary {
+          justify-self: center;
+          background: ${ACCENT};
+          color: ${BG};
+          border: none;
+          border-radius: 10px;
+          padding: 12px 22px;
+          font-weight: 700;
+          font-family: 'Space Grotesk', sans-serif;
+          cursor: pointer;
+        }
+        .contact-form .btn-primary:disabled { opacity: 0.7; cursor: wait; }
+        .contact-form .form-error { color: ${CORAL}; font-size: 13px; margin: 0; }
+        .form-success {
+          background: ${CARD};
+          border: 1px solid ${GREEN}40;
+          border-radius: 12px;
+          padding: 20px 24px;
+        }
+        .form-success-title { color: ${GREEN}; font-weight: 700; margin: 0 0 6px; }
+        .form-success p { color: ${MUTED}; margin: 0; }
+
+        .hero-brand {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 28px;
+          margin-bottom: 40px;
+        }
+        .hero-brand-copy {
+          text-align: center;
+          order: 2;
+        }
+        .hero-brand-logo {
+          order: 1;
+          flex-shrink: 0;
+        }
+        .hero-brand-copy .lede {
+          margin-left: auto;
+          margin-right: auto;
+        }
+        @media (min-width: 768px) {
+          .hero-brand {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            text-align: left;
+          }
+          .hero-brand-copy {
+            text-align: left;
+            order: 1;
+            flex: 1;
+            min-width: 0;
+          }
+          .hero-brand-logo {
+            order: 2;
+          }
+          .hero-brand-copy .lede {
+            margin-left: 0;
+            margin-right: 0;
+          }
+          .hero-live {
+            justify-content: flex-start !important;
+          }
+        }
       `}</style>
 
       {/* ═══ HERO ═══ */}
@@ -506,73 +446,100 @@ export default function UrbanCallLanding() {
         />
 
         <div style={sectionStyle}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              marginBottom: 40,
-            }}
-          >
-            <div
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: GREEN,
-                animation: "pulse 2s ease infinite",
-              }}
-            />
-            <span
-              style={{ fontFamily: "monospace", fontSize: 12, color: MUTED }}
-            >
-              LIVE — Hyderabad, India
-            </span>
+          <div className="hero-brand">
+            <div className="hero-brand-copy">
+              <div
+                className="hero-live"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  marginBottom: 20,
+                }}
+              >
+                <div
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: GREEN,
+                    animation: "pulse 2s ease infinite",
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: 12,
+                    color: MUTED,
+                  }}
+                >
+                  LIVE — Sankali, Goa
+                </span>
+              </div>
+
+              <h1
+                style={{ ...headingStyle, fontSize: 56, letterSpacing: -1 }}
+              >
+                <GlowText color={ACCENT}>Call</GlowText>Kaarigar
+              </h1>
+
+              <p
+                className="lede"
+                style={{
+                  fontSize: 20,
+                  color: MUTED,
+                  marginTop: 12,
+                  maxWidth: 520,
+                }}
+              >
+                Voice AI marketplace for blue-collar services. Workers register,
+                customers post jobs, AI agents handle everything — through phone
+                calls.
+              </p>
+              <h2
+                style={{
+                  ...headingStyle,
+                  fontSize: 26,
+                  letterSpacing: 1,
+                  marginTop: 8,
+                  color: MUTED,
+                }}
+              >
+                No Web. No App. Just Call,{" "}
+                <GlowText color={ACCENT}>Sitback & Relax</GlowText>
+              </h2>
+            </div>
+
+            <div className="hero-brand-logo">
+              <Image
+                src={LOGO}
+                alt="CallKaarigar logo"
+                width={180}
+                height={180}
+                priority
+                style={{
+                  borderRadius: 28,
+                  background: "#fff",
+                  boxShadow: `0 0 40px ${ACCENT}30`,
+                }}
+              />
+            </div>
           </div>
 
-          <h1 style={{ ...headingStyle, fontSize: 56, letterSpacing: -1 }}>
-            <GlowText color={ACCENT}>Urban</GlowText>Call
-          </h1>
-
-          <p
-            style={{ fontSize: 20, color: MUTED, marginTop: 12, maxWidth: 600 }}
-          >
-            Voice AI marketplace for blue-collar services. Workers register,
-            customers post jobs, AI agents handle everything — through phone
-            calls.
-          </p>
-          <h2
-            style={{
-              ...headingStyle,
-              fontSize: 26,
-              letterSpacing: 1,
-              marginTop: 8,
-              color: MUTED,
-            }}
-          >
-            No Web. No App. Just Call,{" "}
-            <GlowText color={ACCENT}>Sitback & Relax</GlowText>
-          </h2>
-          {/* Phone numbers */}
           <div
             style={{
               display: "flex",
               gap: 20,
-              marginTop: 40,
+              marginTop: 8,
               flexWrap: "wrap",
+              justifyContent: "center",
             }}
           >
             <PhoneCard
-              label="Worker Line — Call to Register"
-              phone={WORKER_PHONE}
+              label="CallKaarigar — One line for everyone"
+              phone={PHONE}
               color={ACCENT}
-              side="left"
-            />
-            <PhoneCard
-              label="Customer Line — Post a Job"
-              phone={CUSTOMER_PHONE}
-              color={CORAL}
-              side="right"
             />
           </div>
 
@@ -582,11 +549,12 @@ export default function UrbanCallLanding() {
               gap: 24,
               marginTop: 32,
               flexWrap: "wrap",
+              justifyContent: "center",
             }}
           >
             {[
               { n: "0", l: "Apps Required" },
-              { n: "5", l: "AI Agents" },
+              { n: "1", l: "Phone Line" },
               { n: "20", l: "Trade Types" },
               { n: "~7min", l: "End-to-End" },
             ].map((s, i) => (
@@ -639,132 +607,6 @@ export default function UrbanCallLanding() {
         </div>
       </section>
 
-      {/* ═══ ARCHITECTURE — 5 AGENTS ═══ */}
-      <section
-        style={{
-          paddingTop: 80,
-          paddingBottom: 80,
-          borderTop: `1px solid ${MUTED}15`,
-        }}
-      >
-        <div style={sectionStyle}>
-          <div style={{ ...labelStyle, color: ACCENT }}>
-            SYSTEM ARCHITECTURE
-          </div>
-          <h2 style={{ ...headingStyle, fontSize: 32, marginBottom: 8 }}>
-            5 Specialized Voice Agents
-          </h2>
-          <p style={{ color: MUTED, fontSize: 14, marginBottom: 32 }}>
-            2 inbound (general-purpose) + 3 outbound (single-purpose) across 2
-            Bolna accounts
-          </p>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: 16,
-            }}
-          >
-            {agents.map((a) => (
-              <AgentCard key={a.id} agent={a} />
-            ))}
-          </div>
-
-          {/* Backend card */}
-          <div
-            style={{
-              marginTop: 16,
-              background: CARD,
-              border: `1px solid ${MUTED}20`,
-              borderRadius: 12,
-              padding: "20px 24px",
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-            }}
-          >
-            <span style={{ fontSize: 20 }}>🗄️</span>
-            <div>
-              <div
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 700,
-                  color: TEXT,
-                  fontSize: 15,
-                }}
-              >
-                FastAPI Backend
-              </div>
-              <div style={{ fontSize: 13, color: MUTED }}>
-                PostgreSQL (pg8000) • Background job queue (15s polling) •
-                Webhook upsert pipeline • Deployed on Render
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ BOLNA FEATURES ═══ */}
-      <section
-        style={{
-          paddingTop: 80,
-          paddingBottom: 80,
-          borderTop: `1px solid ${MUTED}15`,
-        }}
-      >
-        <div style={sectionStyle}>
-          <div style={{ ...labelStyle, color: CORAL }}>
-            BOLNA AI FEATURES LEVERAGED
-          </div>
-          <h2 style={{ ...headingStyle, fontSize: 32, marginBottom: 32 }}>
-            Every capability, pushed to production
-          </h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: 16,
-            }}
-          >
-            {bolnaFeatures.map((f, i) => (
-              <div
-                key={i}
-                style={{
-                  background: CARD,
-                  border: `1px solid ${MUTED}15`,
-                  borderRadius: 12,
-                  padding: "24px",
-                  transition: "border-color 0.3s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.borderColor = `${ACCENT}40`)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.borderColor = `${MUTED}15`)
-                }
-              >
-                <div style={{ fontSize: 24, marginBottom: 12 }}>{f.icon}</div>
-                <div
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 15,
-                    color: TEXT,
-                    marginBottom: 8,
-                  }}
-                >
-                  {f.title}
-                </div>
-                <div style={{ fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
-                  {f.desc}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══ TRADES ═══ */}
       <section
         style={{
@@ -776,9 +618,16 @@ export default function UrbanCallLanding() {
         <div style={sectionStyle}>
           <div style={{ ...labelStyle, color: GREEN }}>SUPPORTED TRADES</div>
           <h2 style={{ ...headingStyle, fontSize: 24, marginBottom: 20 }}>
-            20 categories across Hyderabad
+            20 categories across Goa
           </h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 8,
+              justifyContent: "center",
+            }}
+          >
             {trades.map((t, i) => (
               <span
                 key={i}
@@ -818,9 +667,16 @@ export default function UrbanCallLanding() {
       >
         <div style={sectionStyle}>
           <div style={{ ...labelStyle, color: MUTED }}>TECH STACK</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              justifyContent: "center",
+            }}
+          >
             {[
-              "Bolna AI",
+              "Voice AI",
               "FastAPI",
               "PostgreSQL",
               "ElevenLabs TTS",
@@ -848,42 +704,100 @@ export default function UrbanCallLanding() {
         </div>
       </section>
 
+      {/* ═══ CONTACT ═══ */}
+      <section
+        id="contact"
+        style={{
+          paddingTop: 80,
+          paddingBottom: 80,
+          borderTop: `1px solid ${MUTED}15`,
+        }}
+      >
+        <div style={sectionStyle}>
+          <div style={{ ...labelStyle, color: ACCENT }}>CONTACT</div>
+          <h2 style={{ ...headingStyle, fontSize: 32, marginBottom: 12 }}>
+            Get in touch
+          </h2>
+          <p
+            style={{
+              color: MUTED,
+              fontSize: 14,
+              marginBottom: 28,
+              maxWidth: 560,
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            CallKaarigar — Sankali, Goa · Mon–Sat 9:00 AM–7:00 PM IST ·{" "}
+            <a href="https://callkaarigar.in" style={{ color: ACCENT }}>
+              callkaarigar.in
+            </a>
+          </p>
+          <div
+            style={{
+              background: CARD,
+              border: `1px solid ${MUTED}20`,
+              borderRadius: 16,
+              padding: "28px 32px",
+              maxWidth: 560,
+              margin: "0 auto",
+              textAlign: "left",
+            }}
+          >
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
       {/* ═══ FOOTER ═══ */}
       <footer
-  style={{
-    borderTop: `1px solid ${MUTED}15`,
-    padding: "32px 0",
-    textAlign: "center",
-  }}
->
-  
-
-  <div
-    style={{
-      fontFamily: "monospace",
-      fontSize: 12,
-      color: MUTED,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 8,
-    }}
-  >
-    <a
-      href="https://github.com/coder-zs-cse/karigaar-backend"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: MUTED, display: "flex", alignItems: "center" }}
-    >
-      <FaGithub />
-    </a>
-    <span>
-      | Built with ❤️ | Hyderabad, India • {new Date().getFullYear()}
-    </span>
-
-    
-  </div>
-</footer>
+        style={{
+          borderTop: `1px solid ${MUTED}15`,
+          padding: "32px 0",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            fontFamily: "monospace",
+            fontSize: 12,
+            color: MUTED,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              flexWrap: "wrap",
+            }}
+          >
+            <a
+              href="https://github.com/coder-zs-cse/karigaar-backend"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: MUTED, display: "flex", alignItems: "center" }}
+            >
+              <FaGithub />
+            </a>
+            <span>
+              | CallKaarigar · Sankali, Goa · {new Date().getFullYear()}
+            </span>
+          </div>
+          <span>
+            <a href="https://callkaarigar.in" style={{ color: MUTED }}>
+              callkaarigar.in
+            </a>
+            {" · "}
+            Mon–Sat 9AM–7PM IST
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }

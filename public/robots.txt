@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://callkaarigar.in/sitemap.xml
