@@ -474,7 +474,7 @@ export default function CallKaarigarLanding() {
                     color: MUTED,
                   }}
                 >
-                  LIVE — Sankali, Goa
+                  LIVE — Sankhali, Goa
                 </span>
               </div>
 
@@ -728,7 +728,7 @@ export default function CallKaarigarLanding() {
               marginRight: "auto",
             }}
           >
-            CallKaarigar — Sankali, Goa · Mon–Sat 9:00 AM–7:00 PM IST ·{" "}
+            CallKaarigar — Sankhali, Goa · Mon–Sat 9:00 AM–7:00 PM IST ·{" "}
             <a href="https://callkaarigar.in" style={{ color: ACCENT }}>
               callkaarigar.in
             </a>
@@ -786,7 +786,7 @@ export default function CallKaarigarLanding() {
               <FaGithub />
             </a>
             <span>
-              | CallKaarigar · Sankali, Goa · {new Date().getFullYear()}
+              | CallKaarigar · Sankhali, Goa · {new Date().getFullYear()}
             </span>
           </div>
           <span>

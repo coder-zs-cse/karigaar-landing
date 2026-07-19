@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://callkaarigar.in"),
   title: "CallKaarigar — Skilled workers on a phone call",
   description:
-    "CallKaarigar connects customers in Goa with electricians, plumbers, painters, and other skilled workers by phone. Sankali, Goa.",
+    "CallKaarigar connects customers in Goa with electricians, plumbers, painters, and other skilled workers by phone. Sankhali, Goa.",
   icons: {
     icon: [
       { url: "/assets/favicon-96x96.png", sizes: "96x96", type: "image/png" },

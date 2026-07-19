@@ -7,12 +7,12 @@ export const BUSINESS = {
   website: "https://callkaarigar.in",
   email: "hello@callkaarigar.in",
   address: {
-    street: "Sankali",
-    locality: "Sankali",
+    street: "Sankhali",
+    locality: "Sankhali",
     region: "Goa",
     postalCode: "403505",
     country: "IN",
-    formatted: "Sankali, Goa, India",
+    formatted: "Sankhali, Goa, India",
   },
   hours: [
     { days: "Monday – Saturday", open: "9:00 AM", close: "7:00 PM" },
