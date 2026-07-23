@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { submitContactForm, type ContactFormState } from "@/app/actions/contact";
+import { submitContactForm, type ContactFormState } from "@/actions/contact";
 
 const initial: ContactFormState = { ok: false };
 

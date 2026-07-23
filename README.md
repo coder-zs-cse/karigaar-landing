@@ -12,4 +12,4 @@ npm run dev
 
 ## Contact form
 
-Server action emails `OWNER_EMAIL` via Nodemailer (`app/actions/contact.ts`, `lib/email.ts`).
+Server action emails `OWNER_EMAIL` via Nodemailer (`src/actions/contact.ts`, `src/lib/email.ts`).

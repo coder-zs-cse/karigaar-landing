@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
-import ContactForm from "@/app/components/ContactForm";
+import ContactForm from "@/components/ContactForm";
 
 const LOGO = "/assets/web-app-manifest-512x512.png";
 
